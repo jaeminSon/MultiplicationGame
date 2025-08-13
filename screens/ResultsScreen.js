@@ -1,0 +1,136 @@
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+
+export default function ResultsScreen({ route, navigation }) {
+  const { score, table, totalQuestions } = route.params;
+  const correctAnswers = score / 5;
+  const percentage = Math.round((correctAnswers / totalQuestions) * 100);
+
+  const getPerformanceMessage = () => {
+    if (percentage >= 90) return "Excellent! 🌟";
+    if (percentage >= 80) return "Great job! 👏";
+    if (percentage >= 70) return "Good work! 👍";
+    if (percentage >= 60) return "Not bad! 😊";
+    return "Keep practicing! 💪";
+  };
+
+  const handleHome = () => {
+    navigation.navigate('Home');
+  };
+
+  const handleRestart = () => {
+    navigation.navigate('Game', { table });
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Game Complete!</Text>
+      
+      <View style={styles.scoreContainer}>
+        <Text style={styles.finalScore}>{score}</Text>
+        <Text style={styles.scoreLabel}>Final Score</Text>
+        
+        <Text style={styles.details}>
+          {correctAnswers} out of {totalQuestions} correct ({percentage}%)
+        </Text>
+        
+        <Text style={styles.performanceMessage}>
+          {getPerformanceMessage()}
+        </Text>
+      </View>
+
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.button} onPress={handleHome}>
+          <Text style={styles.buttonText}>Home</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity style={[styles.button, styles.restartButton]} onPress={handleRestart}>
+          <Text style={styles.buttonText}>Restart</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+    paddingHorizontal: 20,
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#333',
+    marginTop: 40,
+    marginBottom: 40,
+    textAlign: 'center',
+  },
+  scoreContainer: {
+    alignItems: 'center',
+    marginBottom: 50,
+    padding: 30,
+    backgroundColor: 'white',
+    borderRadius: 15,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  finalScore: {
+    fontSize: 64,
+    fontWeight: 'bold',
+    color: '#007AFF',
+  },
+  scoreLabel: {
+    fontSize: 18,
+    color: '#666',
+    marginBottom: 20,
+  },
+  details: {
+    fontSize: 16,
+    color: '#333',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  performanceMessage: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#4CAF50',
+    textAlign: 'center',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  button: {
+    backgroundColor: '#007AFF',
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+    flex: 0.45,
+    alignItems: 'center',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  restartButton: {
+    backgroundColor: '#4CAF50',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+});
