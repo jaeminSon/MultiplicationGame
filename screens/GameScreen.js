@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import React, { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
 export default function GameScreen({ route, navigation }) {
-  const { table } = route.params;
+  const { table, duration, totalProblems } = route.params;
+  const durationMS = duration * 1000;
   const [currentQuestion, setCurrentQuestion] = useState(1);
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(1000);
+  const [timeLeft, setTimeLeft] = useState(durationMS);
   const [question, setQuestion] = useState({});
   const [answers, setAnswers] = useState([]);
   const [isAnswered, setIsAnswered] = useState(false);
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(false);
 
   // Generate random number within the table range
-  const getRandomNumber = (max) => Math.floor(Math.random() * max) + 1;
+  const getRandomNumber = (min, max) =>
+    Math.floor(Math.random() * (max - min + 1)) + min;
 
   // Get smooth color interpolation for timer
   const getTimerColor = (timeLeft) => {
-    const ratio = timeLeft / 1000; // 0 to 1
+    const ratio = timeLeft / durationMS; // 0 to 1
     if (ratio > 0.5) {
       // Yellow to orange (1.0 to 0.5)
       const r = 255;
@@ -38,7 +38,7 @@ export default function GameScreen({ route, navigation }) {
     const digitCount = correctAnswer.toString().length;
     const lastDigit = correctAnswer % 10;
     const wrongAnswers = [];
-    
+
     while (wrongAnswers.length < 3) {
       let wrongAnswer;
       if (digitCount === 1) {
@@ -50,64 +50,72 @@ export default function GameScreen({ route, navigation }) {
         // Replace last digit with correct answer's last digit
         wrongAnswer = Math.floor(wrongAnswer / 10) * 10 + lastDigit;
       }
-      
-      if (wrongAnswer !== correctAnswer && !wrongAnswers.includes(wrongAnswer) && wrongAnswer > 0) {
+
+      if (
+        wrongAnswer !== correctAnswer &&
+        !wrongAnswers.includes(wrongAnswer) &&
+        wrongAnswer > 0
+      ) {
         wrongAnswers.push(wrongAnswer);
       }
     }
-    
+
     return wrongAnswers;
   };
 
   // Generate new question
   const generateQuestion = () => {
-    const num1 = getRandomNumber(table);
-    const num2 = getRandomNumber(table);
+    let num1, num2;
+    if (Math.random() < 0.5) {
+      num1 = getRandomNumber(1, table);
+      num2 = getRandomNumber(table - 8, table);
+    } else {
+      num1 = getRandomNumber(table - 8, table);
+      num2 = getRandomNumber(1, table);
+    }
     const correctAnswer = num1 * num2;
     const wrongAnswers = generateWrongAnswers(correctAnswer);
-    
+
     // Shuffle answers
     const allAnswers = [correctAnswer, ...wrongAnswers];
     const shuffledAnswers = allAnswers.sort(() => Math.random() - 0.5);
-    
+
     setQuestion({ num1, num2, correctAnswer });
     setAnswers(shuffledAnswers);
-    setTimeLeft(1000);
+    setTimeLeft(durationMS);
     setIsAnswered(false);
-    setShowFeedback(false);
   };
 
   // Handle answer selection
   const handleAnswerPress = (selectedAnswer) => {
     if (isAnswered) return;
-    
+
     setIsAnswered(true);
     const correct = selectedAnswer === question.correctAnswer;
-    setIsCorrect(correct);
-    setShowFeedback(true);
-    
+
     if (correct) {
-      setScore(score + 5);
+      setScore(score + 1);
     }
-    
+
     setTimeout(() => {
-      if (currentQuestion < 20) {
+      if (currentQuestion < totalProblems) {
         setCurrentQuestion(currentQuestion + 1);
         generateQuestion();
       } else {
-        navigation.navigate('Results', { 
-          score: correct ? score + 5 : score, 
+        navigation.navigate("Results", {
+          score: correct ? score + 1 : score,
           table,
-          totalQuestions: 20
+          totalProblems,
+          duration, 
         });
       }
     }, 500);
   };
 
-  // Timer effect - updates every 10ms for smooth animation
+  // Timer effect - updates every 100ms for smooth animation
   useEffect(() => {
     if (timeLeft > 0 && !isAnswered) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 10), 10);
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 100), 100);
       return () => clearTimeout(timer);
     } else if (timeLeft <= 0 && !isAnswered) {
       handleAnswerPress(-1); // Wrong answer when time runs out
@@ -122,16 +130,20 @@ export default function GameScreen({ route, navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.questionCounter}>Question {currentQuestion}/20</Text>
+        <Text style={styles.questionCounter}>
+          Question {currentQuestion}/{totalProblems}
+        </Text>
         <View style={styles.timerContainer}>
           <View style={styles.timerBar}>
-            <View style={[
-              styles.timerProgress, 
-              { 
-                width: `${(timeLeft / 1000) * 100}%`,
-                backgroundColor: getTimerColor(timeLeft)
-              }
-            ]} />
+            <View
+              style={[
+                styles.timerProgress,
+                {
+                  width: `${(timeLeft / durationMS) * 100}%`,
+                  backgroundColor: getTimerColor(timeLeft),
+                },
+              ]}
+            />
           </View>
         </View>
         <Text style={styles.score}>Score: {score}</Text>
@@ -143,27 +155,18 @@ export default function GameScreen({ route, navigation }) {
         </Text>
       </View>
 
-      {showFeedback && (
-        <View style={styles.feedbackContainer}>
-          <Text style={[styles.feedbackText, isCorrect ? styles.correct : styles.incorrect]}>
-            {isCorrect ? '✓ Correct!' : '✗ Wrong!'}
-          </Text>
-          {!isCorrect && (
-            <Text style={styles.correctAnswerText}>
-              Correct answer: {question.correctAnswer}
-            </Text>
-          )}
-        </View>
-      )}
-
       <View style={styles.answersContainer}>
         {answers.map((answer, index) => (
           <TouchableOpacity
             key={index}
             style={[
               styles.answerButton,
-              isAnswered && answer === question.correctAnswer && styles.correctButton,
-              isAnswered && answer !== question.correctAnswer && styles.disabledButton
+              isAnswered &&
+                answer === question.correctAnswer &&
+                styles.correctButton,
+              isAnswered &&
+                answer !== question.correctAnswer &&
+                styles.disabledButton,
             ]}
             onPress={() => handleAnswerPress(answer)}
             disabled={isAnswered}
@@ -179,82 +182,82 @@ export default function GameScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
     paddingHorizontal: 20,
     paddingTop: 20,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 40,
   },
   questionCounter: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
   },
   timerContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   timerBar: {
     width: 100,
     height: 8,
-    backgroundColor: '#ddd',
+    backgroundColor: "#ddd",
     borderRadius: 4,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   timerProgress: {
-    height: '100%',
+    height: "100%",
     borderRadius: 4,
-    transition: 'all 0.3s ease-in-out',
+    transition: "all 0.3s ease-in-out",
   },
   score: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
   },
   questionContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 80,
   },
   questionText: {
     fontSize: 48,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
   },
   feedbackContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 10,
   },
   feedbackText: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   correct: {
-    color: '#4CAF50',
+    color: "#4CAF50",
   },
   incorrect: {
-    color: '#f44336',
+    color: "#f44336",
   },
   correctAnswerText: {
     fontSize: 18,
-    color: '#666',
+    color: "#666",
     marginTop: 5,
   },
   answersContainer: {
     flex: 1,
   },
   answerButton: {
-    backgroundColor: '#0492c2',
+    backgroundColor: "#928e85",
     paddingVertical: 20,
     borderRadius: 10,
     marginBottom: 15,
-    alignItems: 'center',
+    alignItems: "center",
     elevation: 3,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -263,14 +266,14 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
   },
   correctButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: "#4CAF50",
   },
   disabledButton: {
     opacity: 0.6,
   },
   answerText: {
-    color: 'white',
+    color: "white",
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
