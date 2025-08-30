@@ -16,14 +16,14 @@ export default {
     },
     plugins: [withGoogleMobileAds],
     android: {
-      package: "com.jaeminson.mulgame",
+      package: "com.jaeminson.multiplicationgame",
       adaptiveIcon: {
         foregroundImage: "./assets/adaptive-icon.png",
         backgroundColor: "#ffffff",
       },
     },
     ios: {
-      bundleIdentifier: "com.jaeminson.mulgame",
+      bundleIdentifier: "com.jaeminson.multiplicationgame",
       supportsTablet: true,
     },
     web: {
