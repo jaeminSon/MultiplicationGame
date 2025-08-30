@@ -87,12 +87,12 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.jaeminson.mulgame'
+    namespace 'com.jaeminson.multiplicationgame'
     defaultConfig {
-        applicationId 'com.jaeminson.mulgame'
+        applicationId 'com.jaeminson.multiplicationgame'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
+        versionCode 3
         versionName "1.0.0"
     }
     signingConfigs {

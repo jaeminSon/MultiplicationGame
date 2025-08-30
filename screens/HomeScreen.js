@@ -132,7 +132,7 @@ export default function HomeScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#ffffff",
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 60, // Space for banner ad
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   settingsButton: {
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#ffffff",
     width: 40,
     height: 40,
     borderRadius: 20,
