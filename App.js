@@ -15,7 +15,7 @@ export default function App() {
           name="Home"
           component={HomeScreen}
           initialParams={{ duration: 5, totalProblems: 20 }}
-          options={{ headerShown: false }}
+          options={{ title: "Multiplication Game" }}
         />
         <Stack.Screen
           name="Game"
@@ -25,7 +25,7 @@ export default function App() {
         <Stack.Screen
           name="Results"
           component={ResultsScreen}
-          options={{ headerShown: false }}
+          options={{ title: "Results" }}
         />
       </Stack.Navigator>
     </NavigationContainer>
