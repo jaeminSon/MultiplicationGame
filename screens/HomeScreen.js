@@ -8,10 +8,9 @@ import {
   Modal,
   TextInput,
 } from "react-native";
-import mobileAds, {
+import {
   BannerAd,
   BannerAdSize,
-  TestIds,
 } from "react-native-google-mobile-ads";
 
 const adUnitId = "ca-app-pub-6810850129615089/1353367622";
