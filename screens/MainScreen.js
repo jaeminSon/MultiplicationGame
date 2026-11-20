@@ -5,6 +5,7 @@ import { BannerAd, BannerAdSize } from "react-native-google-mobile-ads";
 
 import { useAdsReady } from "../ageSignals";
 import MultiplicationIcon from "../components/MultiplicationIcon";
+import CoinIcon from "../components/CoinIcon";
 
 const adUnitId = "ca-app-pub-6810850129615089/1353367622";
 
@@ -14,6 +15,11 @@ const games = [
     title: "Multiplication",
     Icon: MultiplicationIcon,
     screen: "Multiplication",
+  },
+  {
+    title: "Coin Toss",
+    Icon: CoinIcon,
+    screen: "CoinToss",
   },
 ];
 

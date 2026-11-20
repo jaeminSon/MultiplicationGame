@@ -5,6 +5,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import MainScreen from "./screens/MainScreen";
 import HomeScreen from "./screens/HomeScreen";
+import CoinTossScreen from "./screens/CoinTossScreen";
 import GameScreen from "./screens/GameScreen";
 import ResultsScreen from "./screens/ResultsScreen";
 
@@ -29,6 +30,11 @@ export default function App() {
           component={HomeScreen}
           initialParams={{ duration: 5, totalProblems: 20 }}
           options={{ title: "Multiplication Game" }}
+        />
+        <Stack.Screen
+          name="CoinToss"
+          component={CoinTossScreen}
+          options={{ title: "Coin Toss" }}
         />
         <Stack.Screen
           name="Game"
