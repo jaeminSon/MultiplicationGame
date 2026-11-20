@@ -15,8 +15,10 @@ export default function ResultsScreen({ route, navigation }) {
   };
 
   const handleHome = () => {
-    // Pass back duration (seconds) and totalProblems to Home
-    navigation.navigate("Home", {
+    // Go back to the multiplication table picker, passing back duration (seconds)
+    // and totalProblems. popTo (not navigate) returns to the existing screen so
+    // its back button still leads to the game list.
+    navigation.popTo("Multiplication", {
       duration: parseInt(duration),
       totalProblems: parseInt(totalProblems),
     });

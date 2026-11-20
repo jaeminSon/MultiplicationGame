@@ -6,7 +6,7 @@ export default {
     name: "MulGame",
     slug: "mulgame",
     // Bump both on every Play release: versionCode must be higher than the last upload.
-    version: "1.0.1",
+    version: "1.1.0",
     orientation: "portrait",
     icon: "./assets/icon.png",
     userInterfaceStyle: "light",
@@ -37,7 +37,7 @@ export default {
     ],
     android: {
       package: "com.jaeminson.multiplicationgame",
-      versionCode: 4,
+      versionCode: 5,
       adaptiveIcon: {
         foregroundImage: "./assets/adaptive-icon.png",
         backgroundColor: "#ffffff",

@@ -3,6 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import MainScreen from "./screens/MainScreen";
 import HomeScreen from "./screens/HomeScreen";
 import GameScreen from "./screens/GameScreen";
 import ResultsScreen from "./screens/ResultsScreen";
@@ -17,9 +18,14 @@ export default function App() {
       <StatusBar style="dark" />
       <SafeAreaView style={{ flex: 1, backgroundColor: "white" }} edges={["bottom"]}>
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
+      <Stack.Navigator initialRouteName="Main">
         <Stack.Screen
-          name="Home"
+          name="Main"
+          component={MainScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Multiplication"
           component={HomeScreen}
           initialParams={{ duration: 5, totalProblems: 20 }}
           options={{ title: "Multiplication Game" }}
