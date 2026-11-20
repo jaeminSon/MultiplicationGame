@@ -1,4 +1,6 @@
 import React from "react";
+import { StatusBar } from "expo-status-bar";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "./screens/HomeScreen";
@@ -8,7 +10,12 @@ import ResultsScreen from "./screens/ResultsScreen";
 const Stack = createStackNavigator();
 
 export default function App() {
+  // Android 16 (API 36) always draws apps edge-to-edge. Stack headers already pad
+  // for the status bar; this keeps content clear of the gesture/navigation bar.
   return (
+    <SafeAreaProvider>
+      <StatusBar style="dark" />
+      <SafeAreaView style={{ flex: 1, backgroundColor: "white" }} edges={["bottom"]}>
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen
@@ -29,5 +36,7 @@ export default function App() {
         />
       </Stack.Navigator>
     </NavigationContainer>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }

@@ -35,3 +35,7 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# Play upload key (passwords live in ~/.gradle/gradle.properties)
+credentials/
+modules/*/android/build/

@@ -13,12 +13,16 @@ import {
   BannerAdSize,
 } from "react-native-google-mobile-ads";
 
+import { useAdsReady } from "../ageSignals";
+
 const adUnitId = "ca-app-pub-6810850129615089/1353367622";
 
 const multiplicationTables = [9, 19, 29, 39, 49, 59, 69, 79, 89, 99];
 
 export default function HomeScreen({ route, navigation }) {
   const [showSettings, setShowSettings] = useState(false);
+  // Wait for the Play Age Signals check so minors never get an unrestricted ad.
+  const adsReady = useAdsReady();
   const [duration, setDuration] = useState("5");
   const [totalProblems, setTotalProblems] = useState("20");
 
@@ -71,12 +75,14 @@ export default function HomeScreen({ route, navigation }) {
       </ScrollView>
 
       <View style={styles.bottomContainer}>
-        <BannerAd
-          // 광고 단위 ID
-          unitId={adUnitId}
-          // 베너 광고 크기
-          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-        />
+        {adsReady && (
+          <BannerAd
+            // 광고 단위 ID
+            unitId={adUnitId}
+            // 베너 광고 크기
+            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          />
+        )}
       </View>
 
       <Modal
